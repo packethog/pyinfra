@@ -1,0 +1,9 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: 't
+
+    '
+facts: {}
+exception:
+  name: OperationValueError
+  message: 'invalid nftables table name: ''t\n'''

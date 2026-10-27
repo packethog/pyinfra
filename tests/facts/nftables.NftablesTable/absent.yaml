@@ -1,0 +1,8 @@
+# The inventory doesn't list the table, so the command prints nothing
+arg:
+  family: inet
+  table: pyt
+command: tables=$(nft list tables) && if printf '%s\n' "$tables" | grep -qxF 'table inet pyt' ; then listing=$(nft list table inet pyt ) && printf '%s\n' "$listing" | sed -n '2s/^[[:space:]]*flags /flags /p' && nft -j list table inet pyt ; fi
+requires_command: nft
+output: ''
+fact: null

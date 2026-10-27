@@ -1,0 +1,9 @@
+# Nothing left to remove
+kwargs:
+  table: t
+  present: false
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands: []
+noop_description: nftables table inet t does not exist

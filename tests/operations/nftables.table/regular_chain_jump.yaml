@@ -1,0 +1,30 @@
+# A raw rule can jump to a regular chain
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - jump svc
+    svc: {}
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            jump svc comment "pyinfra:c3ef125f059a23a6"
+        }
+        chain svc {
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 3c2ca3ad8483d6027a941a6542445eee45e94fe1ceeecab20d3898ff802ccd62
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

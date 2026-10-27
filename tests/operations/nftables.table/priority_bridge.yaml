@@ -1,0 +1,27 @@
+# Bridge priorities map to their own values
+kwargs:
+  table: t
+  family: bridge
+  chains:
+    fwd:
+      hook: forward
+      priority: filter + 5
+      rules:
+      - ether type arp accept
+facts:
+  nftables.NftablesTable:
+    family=bridge, table=t: null
+commands:
+- - upload
+  - |
+    table bridge t
+    delete table bridge t
+    table bridge t {
+        chain fwd {
+            type filter hook forward priority -195; policy accept;
+            ether type arp accept comment "pyinfra:bfc45c4c5a7d3a35"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = f1ae071ca1549ff305ec34b79590a33aa0f19054a8894dc879798615d60b5a28
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

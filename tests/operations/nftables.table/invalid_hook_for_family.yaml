@@ -1,0 +1,14 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: arp
+  chains:
+    x:
+      hook: forward
+      priority: 0
+facts:
+  nftables.NftablesTable:
+    family=arp, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''x''].hook: invalid hook ''forward'' for the arp family (expected one of input, output)'

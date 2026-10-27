@@ -1,0 +1,11 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: netdev
+  chains: {}
+facts:
+  nftables.NftablesTable:
+    family=netdev, table=t: null
+exception:
+  name: OperationValueError
+  message: 'invalid nftables family: ''netdev'' (expected one of ip, ip6, inet, arp, bridge)'

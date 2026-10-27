@@ -1,0 +1,17 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: arp
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - action: accept
+facts:
+  nftables.NftablesTable:
+    family=arp, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''input''].rules[0]: structured rules are only supported in ip, ip6 and inet tables;
+    use a raw rule string'

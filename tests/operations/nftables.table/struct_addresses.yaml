@@ -1,0 +1,37 @@
+# Addresses pick ip or ip6, collapse overlaps and normalize host prefixes
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - source:
+        - 10.0.0.0/8
+        - 10.1.0.0/16
+        action: accept
+      - destination: 2001:db8::1/128
+        action: accept
+      - not_source: 192.0.2.0/24
+        destination: 198.51.100.7
+        action: drop
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            ip saddr 10.0.0.0/8 accept comment "pyinfra:edef477640abd685"
+            ip6 daddr 2001:db8::1 accept comment "pyinfra:08fb5839f29802c5"
+            ip saddr != 192.0.2.0/24 ip daddr 198.51.100.7 drop comment "pyinfra:69bf8868d8bc0c7e"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 7afaa16a90195625bc38e3dcff8ead2a1cc2942f4d7e085809b0106fce1021f3
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

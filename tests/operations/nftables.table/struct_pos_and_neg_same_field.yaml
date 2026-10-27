@@ -1,0 +1,18 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - source: 10.0.0.0/8
+        not_source: 10.1.0.0/16
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''input''].rules[0]: can''t set both source and not_source'

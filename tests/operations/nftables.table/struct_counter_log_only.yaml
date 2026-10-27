@@ -1,0 +1,33 @@
+# A counter or log alone is a valid rule
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - counter: true
+      - protocol: tcp
+        destination_port: 22
+        log_prefix: 'ssh; '
+        counter: true
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            counter comment "pyinfra:efe899c74558f20b"
+            tcp dport 22 counter log prefix "ssh; " accept comment "pyinfra:6b1b6e2e8e75f0c0"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 5dd5dae670cb7f4f8de91697c024e2417b59ca9b2656349a500067aba3083b09
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

@@ -1,0 +1,36 @@
+# Chains render in name order
+kwargs:
+  table: t
+  family: inet
+  chains:
+    svc:
+      rules:
+      - protocol: tcp
+        destination_port: 80
+        action: accept
+    input:
+      hook: input
+      priority: filter
+      policy: drop
+      rules:
+      - jump: svc
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy drop;
+            jump svc comment "pyinfra:c3ef125f059a23a6"
+        }
+        chain svc {
+            tcp dport 80 accept comment "pyinfra:cd06cde6f76a8565"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 8802cd09c1ee155fc78e71941ef32cb9670d9260f884bdaf971db8991fba7211
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

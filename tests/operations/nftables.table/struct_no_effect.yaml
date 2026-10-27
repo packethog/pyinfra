@@ -1,0 +1,17 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - protocol: tcp
+        destination_port: 22
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''input''].rules[0]: rule needs an action, jump, counter or log_prefix'

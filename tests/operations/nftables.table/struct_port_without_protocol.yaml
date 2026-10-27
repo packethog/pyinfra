@@ -1,0 +1,17 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - destination_port: 22
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''input''].rules[0].destination_port: ports need protocol tcp or udp'

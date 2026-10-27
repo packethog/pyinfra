@@ -1,0 +1,25 @@
+# present=False removes the table and the file
+kwargs:
+  table: t
+  present: false
+  path: /etc/nftables.d/t.nft
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t:
+      flags: []
+      objects: []
+      chains:
+        input:
+          type: filter
+          hook: input
+          prio: -10
+          policy: accept
+          rules:
+          - pyinfra:572f9f930e3546b2
+          - pyinfra:0732729168229951
+  files.File:
+    path=/etc/nftables.d/t.nft:
+      mode: 644
+commands:
+- nft delete table inet t
+- rm -f /etc/nftables.d/t.nft

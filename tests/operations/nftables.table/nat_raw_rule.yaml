@@ -1,0 +1,28 @@
+# NAT uses raw rules
+kwargs:
+  table: t
+  family: ip
+  chains:
+    postrouting:
+      type: nat
+      hook: postrouting
+      priority: srcnat
+      rules:
+      - ip saddr 192.168.50.0/24 oifname "eth0" masquerade
+facts:
+  nftables.NftablesTable:
+    family=ip, table=t: null
+commands:
+- - upload
+  - |
+    table ip t
+    delete table ip t
+    table ip t {
+        chain postrouting {
+            type nat hook postrouting priority 100; policy accept;
+            ip saddr 192.168.50.0/24 oifname "eth0" masquerade comment "pyinfra:b24ff53bf128c623"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 2fd790a2eaee2e6338dd52bcda5cc6651c9b2c2f031e42dabe130cfc79691f90
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

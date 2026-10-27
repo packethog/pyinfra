@@ -1,0 +1,45 @@
+# A named set added by hand is removed by taking the table over
+kwargs:
+  table: t
+  chains:
+    input:
+      hook: input
+      priority: filter - 10
+      rules:
+      - in_interface: tailscale0
+        protocol: tcp
+        destination_port: 22
+        action: accept
+      - protocol: tcp
+        destination_port: 22
+        action: drop
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t:
+      flags: []
+      objects:
+      - set allow
+      chains:
+        input:
+          type: filter
+          hook: input
+          prio: -10
+          policy: accept
+          rules:
+          - pyinfra:572f9f930e3546b2
+          - pyinfra:0732729168229951
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority -10; policy accept;
+            iifname "tailscale0" tcp dport 22 accept comment "pyinfra:572f9f930e3546b2"
+            tcp dport 22 drop comment "pyinfra:0732729168229951"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 6af3c0979fdaf84199f12751dc1b4d473add998b6c46016bb69ead6411010551
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

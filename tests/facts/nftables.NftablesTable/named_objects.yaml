@@ -1,0 +1,20 @@
+# Named objects are listed so the operation can take the table over
+arg:
+  family: inet
+  table: pyt
+command: tables=$(nft list tables) && if printf '%s\n' "$tables" | grep -qxF 'table inet pyt' ; then listing=$(nft list table inet pyt ) && printf '%s\n' "$listing" | sed -n '2s/^[[:space:]]*flags /flags /p' && nft -j list table inet pyt ; fi
+requires_command: nft
+output: |
+  {"nftables": [{"metainfo": {"version": "1.0.2", "release_name": "Lester Gooch", "json_schema_version": 1}}, {"table": {"family": "inet", "name": "pyt", "handle": 3}}, {"chain": {"family": "inet", "table": "pyt", "name": "input", "handle": 1, "type": "filter", "hook": "input", "prio": 0, "policy": "drop"}}, {"set": {"family": "inet", "name": "allow", "table": "pyt", "type": "ipv4_addr", "handle": 9}}, {"counter": {"family": "inet", "name": "hits", "table": "pyt", "handle": 10, "packets": 0, "bytes": 0}}]}
+fact:
+  flags: []
+  objects:
+  - counter hits
+  - set allow
+  chains:
+    input:
+      type: filter
+      hook: input
+      prio: 0
+      policy: drop
+      rules: []

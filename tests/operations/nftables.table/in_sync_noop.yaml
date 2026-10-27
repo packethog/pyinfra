@@ -1,0 +1,31 @@
+# The live table matches
+kwargs:
+  table: t
+  chains:
+    input:
+      hook: input
+      priority: filter - 10
+      rules:
+      - in_interface: tailscale0
+        protocol: tcp
+        destination_port: 22
+        action: accept
+      - protocol: tcp
+        destination_port: 22
+        action: drop
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t:
+      flags: []
+      objects: []
+      chains:
+        input:
+          type: filter
+          hook: input
+          prio: -10
+          policy: accept
+          rules:
+          - pyinfra:572f9f930e3546b2
+          - pyinfra:0732729168229951
+commands: []
+noop_description: nftables table inet t is up to date

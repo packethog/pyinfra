@@ -1,0 +1,20 @@
+# A rule replaced by hand (nft replace rule) has no comment
+arg:
+  family: inet
+  table: pyt
+command: tables=$(nft list tables) && if printf '%s\n' "$tables" | grep -qxF 'table inet pyt' ; then listing=$(nft list table inet pyt ) && printf '%s\n' "$listing" | sed -n '2s/^[[:space:]]*flags /flags /p' && nft -j list table inet pyt ; fi
+requires_command: nft
+output: |
+  {"nftables": [{"metainfo": {"version": "1.0.2", "release_name": "Lester Gooch", "json_schema_version": 1}}, {"table": {"family": "inet", "name": "pyt", "handle": 3}}, {"chain": {"family": "inet", "table": "pyt", "name": "input", "handle": 1, "type": "filter", "hook": "input", "prio": 0, "policy": "drop"}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 2, "comment": "pyinfra:aaaaaaaaaaaaaaaa", "expr": [{"accept": null}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 3, "expr": [{"accept": null}]}}]}
+fact:
+  flags: []
+  objects: []
+  chains:
+    input:
+      type: filter
+      hook: input
+      prio: 0
+      policy: drop
+      rules:
+      - pyinfra:aaaaaaaaaaaaaaaa
+      - null

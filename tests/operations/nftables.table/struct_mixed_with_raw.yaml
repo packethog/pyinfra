@@ -1,0 +1,30 @@
+# Structured and raw rules mix in one chain
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - ct_state: established
+        action: accept
+      - tcp dport 8000-8100 log prefix "a;b" accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            ct state established accept comment "pyinfra:5050769a920f61df"
+            tcp dport 8000-8100 log prefix "a;b" accept comment "pyinfra:f636b63390cb7bd0"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 471e063ecb076c2a4e02a4d6d0acaf252673681163d823d7b41204da9d3af2ee
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

@@ -1,0 +1,22 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - jump: a
+    a:
+      rules:
+      - jump: b
+    b:
+      rules:
+      - jump: a
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'jump cycle between chains: a -> b -> a'

@@ -1,0 +1,12 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    in put: {}
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'invalid nftables chain name: ''in put'''

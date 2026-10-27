@@ -1,0 +1,30 @@
+# ct_state renders in a fixed order
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - ct_state:
+        - related
+        - established
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            ct state established,related accept comment "pyinfra:d715fd9ae66447ce"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 2a922abe8db889500400703d68bd45c25c11a7c6894febd8f1af2506b008e562
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

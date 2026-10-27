@@ -1,0 +1,28 @@
+# An ip6 table takes IPv6 addresses
+kwargs:
+  table: t
+  family: ip6
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - source: fd00::/8
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=ip6, table=t: null
+commands:
+- - upload
+  - |
+    table ip6 t
+    delete table ip6 t
+    table ip6 t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            ip6 saddr fd00::/8 accept comment "pyinfra:2fdce08b6886a39b"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 99a2c720026915b62eb1cc5e243f6972ff222417b0c8cb32b929e4b9bd2efbb6
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

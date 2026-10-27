@@ -440,6 +440,18 @@ path = "src/pyinfra/facts/iptables.py"
 type = "fact"
 tags = ["security", "system"]
 
+[pyinfra.plugins."nftables-ops"]
+name = "nftables"
+path = "src/pyinfra/operations/nftables.py"
+type = "operation"
+tags = ["security"]
+
+[pyinfra.plugins."nftables-facts"]
+name = "nftables"
+path = "src/pyinfra/facts/nftables.py"
+type = "fact"
+tags = ["security", "system"]
+
 [pyinfra.plugins."selinux-ops"]
 name = "selinux"
 path = "src/pyinfra/operations/selinux.py"

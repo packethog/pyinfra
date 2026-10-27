@@ -1,0 +1,31 @@
+# ICMP protocols render as meta l4proto
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - protocol: icmp
+        action: accept
+      - protocol: ipv6-icmp
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            meta l4proto icmp accept comment "pyinfra:112105805bd0cb67"
+            meta l4proto ipv6-icmp accept comment "pyinfra:5b1313e894362712"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 0cef9baa4903ccdf54797c9711bc0a80b8f7a1f23e72ce626b9d3af74e9e5329
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

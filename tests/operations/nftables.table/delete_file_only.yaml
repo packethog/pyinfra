@@ -1,0 +1,13 @@
+# The table is gone but the file remains
+kwargs:
+  table: t
+  present: false
+  path: /etc/nftables.d/t.nft
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+  files.File:
+    path=/etc/nftables.d/t.nft:
+      mode: 644
+commands:
+- rm -f /etc/nftables.d/t.nft

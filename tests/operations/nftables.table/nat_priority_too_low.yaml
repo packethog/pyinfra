@@ -1,0 +1,15 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    x:
+      type: nat
+      hook: prerouting
+      priority: -200
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''x''].priority: a nat chain''s priority must be above -200'

@@ -19,6 +19,7 @@ extend-ignore-re = [
     "\\[d\\]efault", # Literal dnf module list hint legend
     "\\[e\\]nabled", # Literal dnf module list hint legend
     "\\[i\\]nstalled", # Literal dnf module list hint legend
+    "pyinfra:[0-9a-f]{16}", # nftables rule markers (hex digests)
 ]
 
 [default.extend-words]

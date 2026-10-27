@@ -1,0 +1,28 @@
+# Real nft 1.1.6 output (Ubuntu 26.04): all chains are listed before all rules
+arg:
+  family: inet
+  table: pyt
+command: tables=$(nft list tables) && if printf '%s\n' "$tables" | grep -qxF 'table inet pyt' ; then listing=$(nft list table inet pyt ) && printf '%s\n' "$listing" | sed -n '2s/^[[:space:]]*flags /flags /p' && nft -j list table inet pyt ; fi
+requires_command: nft
+output: |
+  {"nftables": [{"metainfo": {"version": "1.1.6", "release_name": "Commodore Bullmoose #7", "json_schema_version": 1}}, {"table": {"family": "inet", "name": "pyt", "handle": 3}}, {"chain": {"family": "inet", "table": "pyt", "name": "input", "handle": 1, "type": "filter", "hook": "input", "prio": -10, "policy": "accept"}}, {"chain": {"family": "inet", "table": "pyt", "name": "svc", "handle": 2}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 3, "comment": "pyinfra:aaaaaaaaaaaaaaaa", "expr": [{"match": {"op": "==", "left": {"meta": {"key": "iifname"}}, "right": "lo"}}, {"match": {"op": "==", "left": {"payload": {"protocol": "tcp", "field": "dport"}}, "right": 22}}, {"accept": null}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 5, "comment": "pyinfra:bbbbbbbbbbbbbbbb", "expr": [{"match": {"op": "==", "left": {"payload": {"protocol": "tcp", "field": "dport"}}, "right": {"set": [22, 443]}}}, {"drop": null}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 6, "comment": "pyinfra:cccccccccccccccc", "expr": [{"match": {"op": "==", "left": {"meta": {"key": "l4proto"}}, "right": "icmp"}}, {"accept": null}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 8, "comment": "pyinfra:dddddddddddddddd", "expr": [{"match": {"op": "!=", "left": {"payload": {"protocol": "tcp", "field": "dport"}}, "right": {"set": [80, 81]}}}, {"match": {"op": "!=", "left": {"payload": {"protocol": "ip", "field": "saddr"}}, "right": {"prefix": {"addr": "10.0.0.0", "len": 8}}}}, {"counter": {"packets": 0, "bytes": 0}}, {"log": {"prefix": "a\\b;c # x"}}, {"accept": null}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 9, "comment": "pyinfra:eeeeeeeeeeeeeeee", "expr": [{"jump": {"target": "svc"}}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 11, "comment": "pyinfra:ffffffffffffffff", "expr": [{"vmap": {"key": {"payload": {"protocol": "tcp", "field": "dport"}}, "data": {"set": [[23, {"drop": null}]]}}}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "input", "handle": 12, "comment": "pyinfra:1111111111111111", "expr": [{"goto": {"target": "svc"}}]}}, {"rule": {"family": "inet", "table": "pyt", "chain": "svc", "handle": 13, "comment": "pyinfra:2222222222222222", "expr": [{"match": {"op": "==", "left": {"payload": {"protocol": "tcp", "field": "dport"}}, "right": 80}}, {"accept": null}]}}]}
+fact:
+  flags: []
+  objects: []
+  chains:
+    input:
+      type: filter
+      hook: input
+      prio: -10
+      policy: accept
+      rules:
+      - pyinfra:aaaaaaaaaaaaaaaa
+      - pyinfra:bbbbbbbbbbbbbbbb
+      - pyinfra:cccccccccccccccc
+      - pyinfra:dddddddddddddddd
+      - pyinfra:eeeeeeeeeeeeeeee
+      - pyinfra:ffffffffffffffff
+      - pyinfra:1111111111111111
+    svc:
+      rules:
+      - pyinfra:2222222222222222

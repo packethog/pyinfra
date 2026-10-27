@@ -1,0 +1,14 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    x:
+      hook: input
+      priority: true
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''x''].priority: must be an int or a string'

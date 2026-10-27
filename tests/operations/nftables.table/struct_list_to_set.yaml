@@ -1,0 +1,35 @@
+# Lists become sorted, deduplicated anonymous sets
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - protocol: tcp
+        destination_port:
+        - 443
+        - 22
+        - 443
+        in_interface:
+        - eth1
+        - eth0
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            iifname { "eth0", "eth1" } tcp dport { 22, 443 } accept comment "pyinfra:e03c05fed98bc2be"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 71b1c3ca28064578cd6d9c09508e2bf046f531881a7708c43d1fd724774c17c1
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

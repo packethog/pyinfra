@@ -1,0 +1,17 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: ip
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - source: 2001:db8::1
+        action: accept
+facts:
+  nftables.NftablesTable:
+    family=ip, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''input''].rules[0]: rule doesn''t match the ip table''s IP version'

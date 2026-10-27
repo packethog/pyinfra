@@ -1,0 +1,12 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains: {}
+  path: /etc/nftables.d/
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'path must be an absolute file path without a trailing slash: ''/etc/nftables.d/'''

@@ -1,0 +1,32 @@
+# not_ keys render as !=
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+      rules:
+      - not_in_interface: lo
+        protocol: udp
+        not_destination_port:
+        - 53
+        - 5353
+        action: drop
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+commands:
+- - upload
+  - |
+    table inet t
+    delete table inet t
+    table inet t {
+        chain input {
+            type filter hook input priority 0; policy accept;
+            iifname != "lo" udp dport != { 53, 5353 } drop comment "pyinfra:cac1f47654af7d6e"
+        }
+    }
+  - _tempfile_
+- '[ "$(sha256sum < _tempfile_ | cut -d'' '' -f1)" = 55fc45e1863f51c32956e4d4f4756092bd540bb070733ca32ece8734ddf1c4d5
+  ] && nft -f _tempfile_ ; rc=$?; rm -f -- _tempfile_ ; exit $rc'

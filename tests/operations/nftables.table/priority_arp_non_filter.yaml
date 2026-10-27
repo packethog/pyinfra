@@ -1,0 +1,14 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: arp
+  chains:
+    x:
+      hook: input
+      priority: raw
+facts:
+  nftables.NftablesTable:
+    family=arp, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''x''].priority: unknown priority name ''raw'' for the arp family'

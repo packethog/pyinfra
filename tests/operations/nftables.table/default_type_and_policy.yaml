@@ -1,0 +1,22 @@
+# type defaults to filter and policy to accept
+kwargs:
+  table: t
+  family: inet
+  chains:
+    input:
+      hook: input
+      priority: 0
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t:
+      flags: []
+      objects: []
+      chains:
+        input:
+          type: filter
+          hook: input
+          prio: 0
+          policy: accept
+          rules: []
+commands: []
+noop_description: nftables table inet t is up to date

@@ -1,0 +1,16 @@
+# Invalid input is rejected before anything runs
+kwargs:
+  table: t
+  family: inet
+  chains:
+    x:
+      hook: input
+      priority: 0
+      devices:
+      - eth0
+facts:
+  nftables.NftablesTable:
+    family=inet, table=t: null
+exception:
+  name: OperationValueError
+  message: 'chains[''x'']: unknown chain keys: devices'
